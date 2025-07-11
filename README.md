@@ -1,63 +1,30 @@
 # Jeff Dickman - Personal Website
 
-A personal website built with React and hosted on AWS using Terraform for infrastructure management.
+A personal website built with React and hosted on GitHub Pages.
 
-## Infrastructure
+## Hosting
 
-This project uses Terraform to manage AWS infrastructure including:
-- S3 bucket for website assets
-- CloudFront distribution for CDN
-- Lambda function for API backend
-- IAM roles and policies
+This website is hosted on GitHub Pages at [https://jeffdickman.github.io/](https://jeffdickman.github.io/)
 
-## Prerequisites
+## Project Structure
 
-1. Install Terraform (v1.12.x or higher)
-2. Configure AWS credentials
-3. Install AWS CLI
+- `/website/` - Contains the website files (index.html, script.js, styles.css)
+- `LICENSE` - Project license
+- `README.md` - Project documentation
 
 ## Deployment
 
-1. Configure required variables in `variables.tf`:
-   - `aws_region`: AWS region (currently set to us-west-2)
-   - `website_bucket_name`: Name for S3 bucket
-   - `website_assets_path`: Path to website assets
-   - `lambda_runtime`: Lambda function runtime
-   - `lambda_memory_size`: Lambda function memory size
-   - `lambda_timeout`: Lambda function timeout
-   - `mongodb_uri`: MongoDB connection string
-   - `jwt_secret`: JWT secret for authentication
-   - `cloudfront_logging_bucket`: Bucket for CloudFront logs
-   - `cloudfront_logging_prefix`: Prefix for CloudFront logs
+1. Push changes to the `gh-pages` branch
+2. GitHub Pages will automatically deploy the content
+3. Website will be available at [https://jeffdickman.github.io/](https://jeffdickman.github.io/)
 
-2. Initialize Terraform:
-   ```bash
-   terraform init
-   ```
+## Development
 
-3. Review the plan:
-   ```bash
-   terraform plan
-   ```
-
-4. Apply the configuration:
-   ```bash
-   terraform apply
-   ```
-
-## Documentation References
-
-- [Terraform AWS Provider Documentation](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)
-- [AWS S3 Bucket Object Documentation](https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_object)
-- [AWS IAM Policy Documentation](https://developer.hashicorp.com/terraform/tutorials/aws/aws-iam-policy)
-- [Terraform Configuration Language](https://developer.hashicorp.com/terraform/language)
-
-## Security
-
-- S3 bucket policy uses AWS CloudFront Origin Access Identity for secure access
-- Lambda function has restricted IAM permissions
-- Environment variables are used for sensitive configuration
-- CloudFront distribution uses HTTPS with default certificate
+The website uses:
+- HTML5
+- CSS3
+- JavaScript ES6+
+- GitHub Pages for hosting
 
 ## Project Structure
 
