@@ -1,0 +1,35 @@
+service: personal-website
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: ${opt:stage, 'dev'}
+  region: us-east-1
+  environment:
+    MONGODB_URI: ${env:MONGODB_URI}
+    JWT_SECRET: ${env:JWT_SECRET}
+
+functions:
+  api:
+    handler: handler.handler
+    events:
+      - http:
+          path: /api/{any+}
+          method: ANY
+          cors: true
+
+plugins:
+  - serverless-offline
+
+package:
+  individually: true
+  exclude:
+    - node_modules/**
+    - .env
+    - .git/**
+    - .gitignore
+    - README.md
+    - serverless.yml
+
+environment:
+  stage: ${self:provider.stage}
