@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function loadBlogPosts() {
         try {
-            const response = await fetch('http://localhost:3000/api/posts');
+            const response = await fetch('/data/blog/posts.json');
             blogPosts = await response.json();
             blogPostsContainer.innerHTML = '';
             blogPosts.forEach(post => {
@@ -85,8 +85,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                     <p>${post.excerpt}</p>
                 `;
-            blogPostsContainer.appendChild(postElement);
-        });
+                blogPostsContainer.appendChild(postElement);
+            });
+        } catch (error) {
+            console.error('Error loading blog posts:', error);
+        }
     }
 
     loadBlogPosts();
@@ -110,24 +113,13 @@ document.addEventListener('DOMContentLoaded', () => {
         submitBtn.addEventListener('click', async () => {
             const password = passwordInput.value;
             try {
-                const response = await fetch('http://localhost:3000/api/auth/login', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        username: 'admin',
-                        password
-                    })
-                });
-
-                if (response.ok) {
-                    const { token } = await response.json();
-                    localStorage.setItem('blogToken', token);
+                // For GitHub Pages, we'll use a simple password check
+                if (password === 'admin123') { // Change this to your desired password
+                    localStorage.setItem('blogToken', 'admin_token');
                     adminOverlay.style.display = 'none';
                     showAdminPanel();
                 } else {
-                    throw new Error('Invalid credentials');
+                    throw new Error('Invalid password');
                 }
             } catch (error) {
                 alert(error.message);
@@ -176,35 +168,38 @@ document.addEventListener('DOMContentLoaded', () => {
                 excerpt: adminForm.querySelector('#post-excerpt').value,
                 content: adminForm.querySelector('#post-content').value,
                 readTime: adminForm.querySelector('#post-read-time').value,
-                image: imagePreview.querySelector('img') ? imagePreview.querySelector('img').src : ''
+                image: imagePreview.querySelector('img') ? imagePreview.querySelector('img').src : '',
+                date: new Date().toISOString()
             };
 
             try {
-                const response = await fetch('http://localhost:3000/api/posts', {
+                // For GitHub Pages, we'll save the post directly to localStorage
+                const posts = JSON.parse(localStorage.getItem('blogPosts') || '[]');
+                posts.unshift(newPost);
+                localStorage.setItem('blogPosts', JSON.stringify(posts));
+                
+                // Update the posts.json file
+                fetch('/data/blog/posts.json', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
+                        'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify(newPost)
+                    body: JSON.stringify(posts)
                 });
 
-                if (response.ok) {
-                    loadBlogPosts();
-                    adminOverlay.style.display = 'none';
-                    
-                    // Reset form
-                    adminForm.querySelector('#post-title').value = '';
-                    adminForm.querySelector('#post-excerpt').value = '';
-                    adminForm.querySelector('#post-read-time').value = '';
-                    adminForm.querySelector('#post-content').value = '';
-                    adminForm.querySelector('#post-image').value = '';
-                    imagePreview.innerHTML = '';
-                } else {
-                    throw new Error('Failed to create post');
-                }
+                loadBlogPosts();
+                adminOverlay.style.display = 'none';
+                
+                // Reset form
+                adminForm.querySelector('#post-title').value = '';
+                adminForm.querySelector('#post-excerpt').value = '';
+                adminForm.querySelector('#post-read-time').value = '';
+                adminForm.querySelector('#post-content').value = '';
+                adminForm.querySelector('#post-image').value = '';
+                imagePreview.innerHTML = '';
             } catch (error) {
-                alert('Error creating post: ' + error.message);
+                console.error('Error creating post:', error);
+                alert('Failed to create post. Please try again.');
             }
 
             blogPosts.unshift(newPost);
